@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# 虚拟环境
+env/
+venv/
+
+# 模型权重（太大，不上传）
+*.pth
+*.onnx
+
+# IDE
+.idea/
+.vscode/
+
+# 数据文件
+*.tif
+*.fif
+*.edf
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+Thumbs.db
+.DS_Store
