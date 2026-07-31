@@ -19,11 +19,10 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
     correct = 0
     total = 0
 
-    for img, eeg in loader:
+    for img, eeg, labels in loader:
         img, eeg = img.to(device), eeg.to(device)
 
-        # 造模拟标签：每张图随机一个灾害类型（实际场景用真实标注数据替换）
-        labels = torch.randint(0, 5, (img.size(0),)).to(device)
+
 
         optimizer.zero_grad()                    # 清空上一轮的梯度
         outputs = model(img, eeg)                # 前向传播
@@ -40,18 +39,18 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
 
 def main():
     # 配置
-    TIF_DIR = r"C:\Users\Nie\Documents\New project\test_data"
+    TIF_DIR = r"D:\PYTHON\untitled\remote_bci\data\remote_sensing\eurosat\2750"
     EEG_DIR = r"D:\PYTHON\untitled\remote_bci\preprocessing\data\eeg"
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"设备: {device}")
 
     # 数据
-    ds = DualModalDataset(TIF_DIR, EEG_DIR)
-    loader = DataLoader(ds, batch_size=2, shuffle=True)
+    ds = DualModalDataset(TIF_DIR, EEG_DIR, mode="folder")
+    loader = DataLoader(ds, batch_size=32, shuffle=True)
 
     # 模型
-    model = SKMMFMNet(img_channels=4, eeg_channels=32, num_classes=5)
+    model = SKMMFMNet(img_channels=3, eeg_channels=32, num_classes=10)
     model.to(device)
 
     # 优化器和损失函数
@@ -59,7 +58,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
 
     # 训练循环
-    num_epochs = 10
+    num_epochs = 5
     for epoch in range(1, num_epochs + 1):
         loss, acc = train_one_epoch(model, loader, optimizer, criterion, device)
         print(f"Epoch {epoch:2d} | Loss: {loss:.4f} | Acc: {acc:.2%}")
